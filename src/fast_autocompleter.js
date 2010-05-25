@@ -254,13 +254,29 @@ Autocompleter.MultiValue = Class.create({
   },
 
   markPrevious: function() {
-    if(this.index > 0) this.index--;
-      else this.index = this.entryCount-1;
+    if(this.index > 0) {this.index--;}
+    else {
+      this.index = this.entryCount-1;
+      this.update.scrollTop = this.update.scrollHeight;
+    }
+    selection = this.getEntry(this.index);
+    selection_top = selection.offsetTop;
+    if(selection_top < this.update.scrollTop){
+      this.update.scrollTop = this.update.scrollTop-selection.offsetHeight;
+    }
   },
 
   markNext: function() {
-    if(this.index < this.entryCount-1) this.index++;
-      else this.index = 0;
+    if(this.index < this.entryCount-1) {this.index++;}
+    else {
+      this.index = 0;
+      this.update.scrollTop = 0;
+    }
+    selection = this.getEntry(this.index);
+    selection_bottom = selection.offsetTop+selection.offsetHeight;
+    if(selection_bottom > this.update.scrollTop+this.update.offsetHeight){
+      this.update.scrollTop = this.update.scrollTop+selection.offsetHeight;
+    }
   },
 
   getEntry: function(index) {
@@ -347,6 +363,7 @@ Autocompleter.MultiValue = Class.create({
       }
       
       this.stopIndicator();
+      this.update.scrollTop = 0;
       this.index = 0;
 
       if(this.entryCount==1 && this.options.autoSelect) {
